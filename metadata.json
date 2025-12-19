@@ -1,0 +1,5 @@
+{
+  "name": "ScoutPick - 아마추어 스포츠 AI 스카우팅 리포트",
+  "description": "유튜브 경기 영상을 분석하여 아마추어 선수들의 실력을 티어로 객관화하고 상세한 스카우팅 리포트를 제공하는 서비스입니다.",
+  "requestFramePermissions": []
+}
