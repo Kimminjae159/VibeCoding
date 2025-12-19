@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Post } from '../types';
+import { Post } from '../types.ts';
 
 interface CommunityViewProps {
   posts: Post[];
@@ -81,6 +81,12 @@ const CommunityView: React.FC<CommunityViewProps> = ({ posts }) => {
               </div>
             </div>
           ))}
+          
+          {posts.length === 0 && (
+            <div className="py-20 text-center bg-white rounded-[32px] border border-dashed border-slate-200">
+               <p className="text-slate-400">등록된 게시물이 없습니다.</p>
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}

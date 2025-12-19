@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tier } from '../types';
+import { Tier } from '../types.ts';
 
 interface TierBadgeProps {
   tier: Tier;
