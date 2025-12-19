@@ -19,20 +19,20 @@ const LoadingView: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center py-40">
+    <div className="flex flex-col items-center justify-center py-40 animate-in fade-in duration-700">
       <div className="relative w-24 h-24 mb-10">
-        <div className="absolute inset-0 border-4 border-indigo-500/20 rounded-full"></div>
-        <div className="absolute inset-0 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+        <div className="absolute inset-0 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-12 h-12 bg-indigo-600/20 rounded-lg animate-pulse"></div>
+          <div className="w-12 h-12 bg-indigo-50 rounded-2xl animate-pulse"></div>
         </div>
       </div>
-      <h2 className="text-2xl font-bold text-white mb-4 animate-pulse">AI 분석 진행 중</h2>
-      <p className="text-slate-400 text-lg transition-all duration-500 italic">
+      <h2 className="text-2xl font-black text-slate-900 mb-4">AI 분석 진행 중</h2>
+      <p className="text-slate-400 text-lg transition-all duration-500 font-bold tracking-tight">
         "{messages[messageIndex]}"
       </p>
-      <div className="mt-12 max-w-md w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-        <div className="bg-indigo-500 h-full animate-[loading_15s_ease-in-out_infinite]"></div>
+      <div className="mt-12 max-w-md w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+        <div className="bg-indigo-600 h-full animate-[loading_15s_ease-in-out_infinite]"></div>
       </div>
       <style>{`
         @keyframes loading {
