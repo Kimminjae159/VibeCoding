@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Match, Tier } from '../types';
-import TierBadge from './TierBadge';
+import { Match, Tier } from '../types.ts';
+import TierBadge from './TierBadge.tsx';
 
 interface MatchCardProps {
   match: Match;

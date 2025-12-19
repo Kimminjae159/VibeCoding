@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { GameReport, PlayerStats } from '../types';
-import TierBadge from './TierBadge';
-import StatRadar from './StatRadar';
+import { GameReport, PlayerStats } from '../types.ts';
+import TierBadge from './TierBadge.tsx';
+import StatRadar from './StatRadar.tsx';
 
 interface ReportViewProps {
   report: GameReport;

@@ -1,8 +1,8 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { Match, Post, Sport, Tier, GameReport } from "../types";
+import { Match, Post, Sport, Tier, GameReport } from "../types.ts";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
 export const analyzeYoutubeVideo = async (url: string): Promise<GameReport> => {
   // 간단한 유튜브 ID 추출
@@ -69,7 +69,7 @@ export const analyzeYoutubeVideo = async (url: string): Promise<GameReport> => {
     }
   });
 
-  const data = JSON.parse(response.text);
+  const data = JSON.parse(response.text || "{}");
   return {
     ...data,
     id: Math.random().toString(36).substr(2, 9),

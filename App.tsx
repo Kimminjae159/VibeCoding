@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { ViewState, Match, Post, Sport, GameReport } from './types';
-import HomeView from './views/HomeView';
-import MatchesView from './views/MatchesView';
-import CommunityView from './views/CommunityView';
-import LandingView from './components/LandingView';
-import LoadingView from './components/LoadingView';
-import ReportView from './components/ReportView';
-import { getAiMatchRecommendations, getCommunityFeed, analyzeYoutubeVideo } from './services/geminiService';
+import { ViewState, Match, Post, Sport, GameReport } from './types.ts';
+import HomeView from './views/HomeView.tsx';
+import MatchesView from './views/MatchesView.tsx';
+import CommunityView from './views/CommunityView.tsx';
+import LandingView from './components/LandingView.tsx';
+import LoadingView from './components/LoadingView.tsx';
+import ReportView from './components/ReportView.tsx';
+import { getAiMatchRecommendations, getCommunityFeed, analyzeYoutubeVideo } from './services/geminiService.ts';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState | 'SCOUTING'>('HOME');

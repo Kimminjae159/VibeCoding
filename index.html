@@ -16,6 +16,10 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
+    <script>
+      // 브라우저에서 process.env.API_KEY 접근 시 에러 방지
+      window.process = { env: { API_KEY: "" } };
+    </script>
 <script type="importmap">
 {
   "imports": {
@@ -29,7 +33,6 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- Vercel 배포 시 실행을 위해 모듈 스크립트 추가 -->
     <script type="module" src="./index.tsx"></script>
 </body>
 </html>

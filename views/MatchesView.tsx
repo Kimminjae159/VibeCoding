@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Match, Sport } from '../types';
-import MatchCard from '../components/MatchCard';
+import { Match, Sport } from '../types.ts';
+import MatchCard from '../components/MatchCard.tsx';
 
 interface MatchesViewProps {
   matches: Match[];
@@ -71,7 +71,7 @@ const MatchesView: React.FC<MatchesViewProps> = ({ matches, selectedSport, onSpo
                   <div className="divide-y divide-slate-100">
                     {dateMatches.map(match => (
                       <div key={match.id} className="px-8 hover:bg-slate-50/50 transition-colors">
-                        <MatchCard match={match} />
+                        <MatchCard key={match.id} match={match} />
                       </div>
                     ))}
                   </div>

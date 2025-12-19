@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Match, Post, Sport } from '../types';
-import MatchCard from '../components/MatchCard';
+import { Match, Post, Sport } from '../types.ts';
+import MatchCard from '../components/MatchCard.tsx';
 
 interface HomeViewProps {
   matches: Match[];
