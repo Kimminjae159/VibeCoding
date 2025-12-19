@@ -4,8 +4,19 @@ import { Match, Post, Sport, Tier, GameReport } from "../types.ts";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
+/**
+ * AI 응답 텍스트에서 순수 JSON 문자열만 추출하는 헬퍼 함수
+ */
+const extractJson = (text: string) => {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    return jsonMatch ? jsonMatch[0] : text;
+  } catch (e) {
+    return text;
+  }
+};
+
 export const analyzeYoutubeVideo = async (url: string): Promise<GameReport> => {
-  // 간단한 유튜브 ID 추출
   const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1] || "";
   
   const prompt = `
@@ -19,7 +30,7 @@ export const analyzeYoutubeVideo = async (url: string): Promise<GameReport> => {
     5. 선수별 티어 측정 (입문, 초보, 아마추어, 선출/프로) 및 개별 피드백
     6. 경기 MVP 선정
     
-    JSON 형식으로 응답해줘.
+    반드시 순수한 JSON 형식으로만 응답해줘.
   `;
 
   const response = await ai.models.generateContent({
@@ -69,7 +80,7 @@ export const analyzeYoutubeVideo = async (url: string): Promise<GameReport> => {
     }
   });
 
-  const data = JSON.parse(response.text || "{}");
+  const data = JSON.parse(extractJson(response.text || "{}"));
   return {
     ...data,
     id: Math.random().toString(36).substr(2, 9),
@@ -80,70 +91,81 @@ export const analyzeYoutubeVideo = async (url: string): Promise<GameReport> => {
 export const getAiMatchRecommendations = async (userPreference: string): Promise<Match[]> => {
   const prompt = `
     사용자의 선호도("${userPreference}")를 바탕으로 5개의 가상 스포츠 매치 데이터를 생성해줘.
+    한국 지역(강남, 판교, 강북 등) 기반으로 생성해.
     JSON 형식으로 응답해.
   `;
 
-  const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            id: { type: Type.STRING },
-            sport: { type: Type.STRING },
-            title: { type: Type.STRING },
-            location: { type: Type.STRING },
-            date: { type: Type.STRING },
-            time: { type: Type.STRING },
-            currentPlayers: { type: Type.NUMBER },
-            maxPlayers: { type: Type.NUMBER },
-            tier: { type: Type.STRING },
-            price: { type: Type.NUMBER },
-            isHot: { type: Type.BOOLEAN },
-          },
-          required: ["id", "sport", "title", "location", "date", "time", "currentPlayers", "maxPlayers", "tier", "price"]
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              id: { type: Type.STRING },
+              sport: { type: Type.STRING },
+              title: { type: Type.STRING },
+              location: { type: Type.STRING },
+              date: { type: Type.STRING },
+              time: { type: Type.STRING },
+              currentPlayers: { type: Type.NUMBER },
+              maxPlayers: { type: Type.NUMBER },
+              tier: { type: Type.STRING },
+              price: { type: Type.NUMBER },
+              isHot: { type: Type.BOOLEAN },
+            },
+            required: ["id", "sport", "title", "location", "date", "time", "currentPlayers", "maxPlayers", "tier", "price"]
+          }
         }
       }
-    }
-  });
+    });
 
-  return JSON.parse(response.text || "[]");
+    return JSON.parse(extractJson(response.text || "[]"));
+  } catch (e) {
+    console.error("Match API Error", e);
+    return [];
+  }
 };
 
 export const getCommunityFeed = async (): Promise<Post[]> => {
-  const prompt = `스포츠 커뮤니티의 활발한 게시물 5개를 JSON 형식으로 생성해줘.`;
+  const prompt = `스포츠 커뮤니티의 활발한 게시물 5개를 JSON 형식으로 생성해줘. 한국 아마추어 동호인들이 좋아할만한 주제(구장 정보, 플레이 스타일 등)로 작성해.`;
   
-  const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            id: { type: Type.STRING },
-            author: { type: Type.STRING },
-            sport: { type: Type.STRING },
-            content: { type: Type.STRING },
-            timestamp: { type: Type.STRING },
-            likes: { type: Type.NUMBER },
-            comments: { type: Type.NUMBER },
-            stadiumInfo: { type: Type.STRING },
-            playStyles: { 
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              id: { type: Type.STRING },
+              author: { type: Type.STRING },
+              sport: { type: Type.STRING },
+              content: { type: Type.STRING },
+              timestamp: { type: Type.STRING },
+              likes: { type: Type.NUMBER },
+              comments: { type: Type.NUMBER },
+              stadiumInfo: { type: Type.STRING },
+              playStyles: { 
+                type: Type.ARRAY,
+                items: { type: Type.STRING }
+              }
             }
           }
         }
       }
-    }
-  });
+    });
 
-  return JSON.parse(response.text || "[]");
+    return JSON.parse(extractJson(response.text || "[]"));
+  } catch (e) {
+    console.error("Community API Error", e);
+    return [];
+  }
 };

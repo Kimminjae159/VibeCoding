@@ -20,25 +20,28 @@ const HomeView: React.FC<HomeViewProps> = ({ matches, posts, onViewAllMatches, o
     { type: Sport.TENNIS, icon: '🎾' },
   ];
 
+  const safeMatches = Array.isArray(matches) ? matches : [];
+  const safePosts = Array.isArray(posts) ? posts : [];
+
   return (
     <div className="animate-in fade-in duration-700 space-y-12">
       {/* Main Banner */}
       <section>
         <div className="relative rounded-[32px] overflow-hidden bg-gradient-to-r from-indigo-600 to-indigo-800 h-64 md:h-80 flex items-center shadow-2xl shadow-indigo-100">
           <div className="relative z-10 px-10 md:px-16 max-w-2xl">
-            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-[10px] font-black uppercase tracking-widest mb-4">New Match Open</span>
+            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-[10px] font-black uppercase tracking-widest mb-4">AI Scouting is here</span>
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
-              오늘 바로 뛸 수 있는<br />우리 동네 매치
+              당신의 실력을<br />데이터로 증명하세요
             </h2>
             <p className="text-indigo-100 text-sm md:text-base mt-4 opacity-90">
-              이미 2,400명이 넘는 유저들이 오늘 경기를 확정했습니다.<br className="hidden md:block" />
-              지금 참여하고 실력을 증명하세요.
+              이미 수많은 아마추어들이 AI 스카우팅 리포트를 통해<br className="hidden md:block" />
+              자신의 객관적인 티어를 확인하고 있습니다.
             </p>
             <button 
               onClick={onViewAllMatches}
               className="mt-8 px-8 py-3 bg-white text-indigo-600 rounded-full font-extrabold text-sm shadow-xl hover:scale-105 transition-transform"
             >
-              매치 보러가기
+              지금 시작하기
             </button>
           </div>
           <div className="absolute right-0 bottom-0 top-0 w-1/3 hidden md:flex items-center justify-center overflow-hidden">
@@ -47,7 +50,7 @@ const HomeView: React.FC<HomeViewProps> = ({ matches, posts, onViewAllMatches, o
         </div>
       </section>
 
-      {/* Sport Selector - Grid Layout */}
+      {/* Sport Selector */}
       <section>
         <h3 className="text-2xl font-black text-slate-900 mb-8 tracking-tight px-2">종목별 매치 찾기</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
@@ -79,11 +82,15 @@ const HomeView: React.FC<HomeViewProps> = ({ matches, posts, onViewAllMatches, o
           </div>
           <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="divide-y divide-slate-100">
-              {matches.slice(0, 5).map(match => (
+              {safeMatches.length > 0 ? safeMatches.slice(0, 5).map(match => (
                 <div key={match.id} className="px-6 hover:bg-slate-50 transition-colors">
                   <MatchCard match={match} />
                 </div>
-              ))}
+              )) : (
+                <div className="p-20 text-center text-slate-400 font-bold">
+                  진행 중인 매치를 불러오고 있습니다...
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -95,7 +102,7 @@ const HomeView: React.FC<HomeViewProps> = ({ matches, posts, onViewAllMatches, o
             <button onClick={onViewCommunity} className="text-sm text-indigo-600 font-bold hover:underline">더보기</button>
           </div>
           <div className="space-y-4">
-            {posts.slice(0, 3).map(post => (
+            {safePosts.length > 0 ? safePosts.slice(0, 3).map(post => (
               <div key={post.id} className="p-5 bg-white rounded-3xl border border-slate-200 hover:border-indigo-300 transition-all cursor-pointer shadow-sm group">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">{post.sport}</span>
@@ -112,7 +119,11 @@ const HomeView: React.FC<HomeViewProps> = ({ matches, posts, onViewAllMatches, o
                   </div>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="p-10 text-center text-slate-300 bg-white rounded-3xl border border-dashed border-slate-200 font-bold text-sm">
+                새로운 소식을 불러오는 중입니다.
+              </div>
+            )}
             <div className="p-6 bg-slate-900 rounded-3xl text-white overflow-hidden relative group cursor-pointer">
               <div className="relative z-10">
                 <h4 className="font-bold mb-1">우리 팀을 홍보하세요!</h4>

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ViewState, Match, Post, Sport, GameReport } from './types.ts';
+import { ViewState, Match, Post, Sport, GameReport, Tier } from './types.ts';
 import HomeView from './views/HomeView.tsx';
 import MatchesView from './views/MatchesView.tsx';
 import CommunityView from './views/CommunityView.tsx';
@@ -9,10 +9,22 @@ import LoadingView from './components/LoadingView.tsx';
 import ReportView from './components/ReportView.tsx';
 import { getAiMatchRecommendations, getCommunityFeed, analyzeYoutubeVideo } from './services/geminiService.ts';
 
+// 고품질 초기 데이터 (AI 응답 대기 중 또는 에러 시 표시)
+const INITIAL_MATCHES: Match[] = [
+  { id: '1', sport: Sport.FUTSAL, title: '판교 IT 직장인 친목 풋살', location: '판교 킹 풋살장', date: '오늘', time: '20:00', currentPlayers: 10, maxPlayers: 12, tier: Tier.AMATEUR, price: 10000, isHot: true },
+  { id: '2', sport: Sport.BASKETBALL, title: '강남 실내 코트 3:3', location: '역삼 멀티코트', date: '오늘', time: '19:30', currentPlayers: 5, maxPlayers: 6, tier: Tier.PRO, price: 15000, isHot: true },
+  { id: '3', sport: Sport.SOCCER, title: '강북구 일요 축구 대회', location: '도봉산 축구장', date: '내일', time: '08:00', currentPlayers: 20, maxPlayers: 22, tier: Tier.AMATEUR, price: 8000 },
+];
+
+const INITIAL_POSTS: Post[] = [
+  { id: 'p1', author: '슛도리김씨', sport: Sport.SOCCER, content: '방금 강남역 근처 구장에서 경기 뛰고 왔는데 여기 샤워실 정말 깨끗하네요! 강력 추천합니다.', timestamp: '방금 전', likes: 24, comments: 8, stadiumInfo: '강남 스카이 풋살파크', playStyles: ['매너겜', '공격적'] },
+  { id: 'p2', author: '덩크마스터', sport: Sport.BASKETBALL, content: '요즘 날씨 추운데 실내 농구장 정보 공유합니다. 판교 근처에 새로 생긴 곳 시설 대박이에요.', timestamp: '10분 전', likes: 15, comments: 4, stadiumInfo: '판교 테크노 농구관', playStyles: ['실내코트', '친목'] },
+];
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState | 'SCOUTING'>('HOME');
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [matches, setMatches] = useState<Match[]>(INITIAL_MATCHES);
+  const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
   const [loading, setLoading] = useState(false);
   const [selectedSport, setSelectedSport] = useState<Sport | 'ALL'>('ALL');
   
@@ -26,18 +38,18 @@ const App: React.FC = () => {
   }, []);
 
   const loadData = async () => {
-    setLoading(true);
+    // 이미 초기 데이터가 있으므로 로딩 바를 띄우지 않고 백그라운드에서 업데이트
     try {
       const [m, p] = await Promise.all([
-        getAiMatchRecommendations("플랩풋볼 스타일의 인기 매치"),
+        getAiMatchRecommendations("최신 트렌드 스포츠 매치"),
         getCommunityFeed()
       ]);
-      setMatches(m);
-      setPosts(p);
+      
+      // 데이터가 정상적으로 왔을 때만 업데이트
+      if (m && m.length > 0) setMatches(m);
+      if (p && p.length > 0) setPosts(p);
     } catch (err) {
-      console.error("데이터 로드 실패", err);
-    } finally {
-      setLoading(false);
+      console.error("데이터 업데이트 실패, 초기 데이터를 유지합니다.", err);
     }
   };
 
@@ -49,7 +61,7 @@ const App: React.FC = () => {
       setCurrentReport(report);
       setAnalysisStatus('REPORT');
     } catch (err) {
-      setError("영상 분석 중 오류가 발생했습니다. 다시 시도해주세요.");
+      setError("AI가 영상을 분석하는 데 실패했습니다. 유튜브 링크가 올바른지 확인해주세요.");
       setAnalysisStatus('IDLE');
     }
   };
@@ -156,12 +168,6 @@ const App: React.FC = () => {
           © 2024 ScoutPick Inc. All rights reserved.
         </div>
       </footer>
-
-      {loading && (
-        <div className="fixed inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-[100]">
-          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
     </div>
   );
 };
